@@ -116,7 +116,6 @@ function carregarEstado() {
     usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
     historicoPedidos = JSON.parse(localStorage.getItem("historicoPedidos")) || [];
 
-    // para todos os itens do carrinho terem a imagem correta
     carrinho = carrinho.map(item => {
         if (!item.imagem || !item.imagem.startsWith("imagens/")) {
             const produtoOriginal = produtosMap.get(item.id);
@@ -182,7 +181,7 @@ function showToast(message, isSuccess = true) {
     setTimeout(() => toast.classList.remove("show"), 2000);
 }
 
-// ---- modal de imagem ----
+// ---- modal de imagem (com melhorias) ----
 function abrirModalImagem(src) {
     const modalExistente = document.getElementById('modalLightbox');
     if (modalExistente) modalExistente.remove();
@@ -198,9 +197,15 @@ function abrirModalImagem(src) {
     modal.style.display = 'flex';
 
     const closeBtn = modal.querySelector('.close-modal');
-    closeBtn.addEventListener('click', () => modal.remove());
+    closeBtn.addEventListener('click', () => {
+        modal.remove();
+    });
     modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.remove();
+    });
+    // evitar que o clique na imagem feche o modal
+    modal.querySelector('.modal-img').addEventListener('click', (e) => {
+        e.stopPropagation();
     });
 }
 
@@ -361,12 +366,18 @@ function renderizar() {
             </div>
 
             <div class="card" style="text-align: center;">
-                <button id="btnIrLogin">🍽️ Começar a pedir → Faça login</button>
+                <button id="btnIrLogin2">🍽️ Começar a pedir → Faça login</button>
             </div>
         `;
         main.innerHTML = html;
 
+        // botao do topo
         document.getElementById("btnIrLogin")?.addEventListener("click", () => {
+            telaAtual = "login";
+            renderizar();
+        });
+        // botao do rodape (corrigido)
+        document.getElementById("btnIrLogin2")?.addEventListener("click", () => {
             telaAtual = "login";
             renderizar();
         });
